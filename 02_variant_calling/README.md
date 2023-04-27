@@ -10,6 +10,9 @@ This folder contains scripts and codes which does the following:
 6. Filter the variants called via BCFtools and STACKS
 
 ## Remove barcodes from the raw reads
+
+The removal of barcodes and adapters, and the alignment of reads to the reference genome was performed for both the STACKS and the BCFtools pipeline. Barcodes were removed from raw reads of the samples we sent to dart using the process_radtags program in STACKS version 2.58 (Catchen et al., 2013), using the following command:
+
 ```bash
 process_radtags -p /path/to/folder/with/raw/reads -b /path/to/barcodesID.txt -o /path/to/output/folder1 -e pstI -c -q -r
 # /path/to/folder/with/raw/reads is the path to the folder containing the raw reads
