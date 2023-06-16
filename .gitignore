@@ -1,4 +1,8 @@
 # ignore .Rhistory files
 *.Rhistory
+# ignore .Rproj
 *.Rproj
+# ignore .Rproj.user/ folders
 *.Rproj.user*
+# ignore the results folder
+**/results/*
