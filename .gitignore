@@ -6,3 +6,9 @@
 *.Rproj.user*
 # ignore the results folder
 **/results/*
+#
+#
+# ignoring some files to help with the process of creating this repository
+01_download_data/DArT.zip
+01_download_data/DArT/
+01_download_data/TableS1.2.csv
