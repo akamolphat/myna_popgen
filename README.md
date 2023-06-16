@@ -6,19 +6,27 @@ This repository is divided into different folders for different tasks. Each fold
 
 ```bash
 ├── 01_download_data
-│   ├── css
-│   │   ├── **/*.css
-│   ├── README.md
-│   ├── js
-│   │   ├── **/*.js
-│   └── partials/template
-├── 02_
-│   ├── css
-│   │   ├── **/*.css
-│   ├── README.md
-│   ├── js
-│   │   ├── **/*.js
-│   └── partials/template
+│   └── README.md
+│   
+├── 02_variant_calling
+│   └── README.md
+|
+├── 03_plot_map
+|   ├── scripts
+│   └── README.md
+|
+├── 04_BCFtools_data_analysis
+|   ├── scripts
+│   └── README.md
+|
+├── 05_STACKS_data_analysis
+|   ├── scripts
+│   └── README.md
+|
+├── 06_DART_data_analysis
+|   ├── scripts
+│   └── README.md
+|
 ├── README.md
 └── .gitignore
 ```
