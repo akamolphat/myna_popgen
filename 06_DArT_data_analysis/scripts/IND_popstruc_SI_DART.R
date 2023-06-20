@@ -90,7 +90,8 @@ dtlatlon <- gl_IND_sub4@other$ind.metrics %>%
   dplyr::summarise(lat = mean(latitude),
             lon = mean(longitude))
 dtlatlon$popdef2[order(dtlatlon$lon)]
-lab_order <- dtlatlon$popdef2[order(dtlatlon$lon)]
+# lab_order <- dtlatlon$popdef2[order(dtlatlon$lon)]
+lab_order <- dtlatlon$popdef2
 shape_order <- c(16, 11, 17, 15, 3, 12, 10, 8, 5)
 col_order <- gg_color_hue(9)
 dtcolshapes <- data.frame(pop = as.character(lab_order),
@@ -113,26 +114,6 @@ pl <- plotPCASI(dtpc,
 
 pl
 pl1 <- pl
-pl <- ggplot() + 
-  geom_point(data = dtpc, 
-             aes(x = PC1, y = PC2, 
-                 shape = popdef2, 
-                 col = popdef2)) + xlab("PCA 1 (3%)") + ylab ("PCA 2 (2.3%)") + theme_classic() +
-  scale_shape_manual(values = shape_order) +
-  theme(axis.title = element_text(size = 10, face = "bold"),
-        axis.text = element_text(size = 8, face = "bold"),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 7, face = "bold"),
-        legend.key.size = unit(0.75, 'lines'),
-        legend.box.margin = margin(-10,0,-10,-10),
-        legend.position = c(0.05,0.975),
-        legend.justification = c(0,1),
-        # legend.background = element_rect(fill='transparent'),
-        # legend.box.background = element_rect(colour = NA, fill='transparent'),
-        legend.margin = margin(t = -0.2, r = 0.1, b = 0, l = 0, unit = "cm"),
-        legend.background = element_rect(color = "black", size = 0.01, linetype = "solid"))
-pl1 <- pl 
-pl1
 
 # Make screeplot for SI -------------------------------------------------------
 screep <- PCA_screeplot(pc, nPC = 15)
@@ -214,7 +195,7 @@ write.table(mat_gl, file = genofile,
 Krange <- 1:5
 snmf_IND_thinnedonly <- snmf(genofile, K = Krange, repetitions = 10, ploidy = 2, 
                              entropy = T, alpha = 100, project = "new",)
-snmf_IND_thinnedonly <- load.snmfProject("data/processed/LEA/02_IND/IND_DART_thinnedonly.snmfProject")
+# snmf_IND_thinnedonly <- load.snmfProject("data/processed/LEA/02_IND/IND_DART_thinnedonly.snmfProject")
 plot(snmf_IND_thinnedonly, col = "blue4", cex = 1.4, pch = 19, main = "Cross entropy plot (snmf), IND dataset.")
 # Calculate mean entropy
 crossentropy.matIND <- t(do.call(cbind, lapply(X=Krange, FUN=function(x){LEA::cross.entropy(snmf_IND_thinnedonly, K = x)})))
