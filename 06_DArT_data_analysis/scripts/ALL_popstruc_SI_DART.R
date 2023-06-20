@@ -50,7 +50,7 @@ gl_all_sub1 <- gl.drop.ind(gl_all, ind.list = ind_rep, recalc = T)
 
 # Remove admixed samples --------------------------------------------
 # The admixed samples from Australia had no population assignment.
-gl_all_sub1a <- gl.drop.pop(gl_all_sub1, pop.list = c("n/a"), 
+gl_all_sub1a <- gl.drop.pop(gl_all_sub1, pop.list = c(NA), 
                             mono.rm = T, recalc = T)
 # Report heterozygousity after removal of admixed samples -----------
 png("results/Figs_paper/SI/DArT_Ho_indiv.png", height = 5, width = 8, units = "in", res = 600)
@@ -258,7 +258,8 @@ rep <- 1:10
 samplenames <- indNames(gl_all_sub4)
 numind <- length(samplenames)
 # Make table of population information
-pop_label_sub <- gl_all_sub4$other$ind.metrics[, c("ID","popdef1")]
+gl_all_sub4$other$ind.metrics$popdef1 <- as.character(gl_all_sub4$other$ind.metrics$popdef1) # convert to character from factor
+pop_label_sub <- gl_all_sub4$other$ind.metrics[, c("id","popdef1")]
 # Attach other information that might be more useful
 pop_label_sub <- pop_label_sub %>% 
   mutate(snmfcluster = replace(popdef1, popdef1 %in% c("AUS: Gold Coast"), "Group 1")) %>%
@@ -285,7 +286,7 @@ pop_trans <- data.frame(popdef1 = pop_labels,
                         pop_codes = pop_abb)
 pop_label_sub <- merge(pop_label_sub, pop_trans)
 # Make sure that the ID is sorted properly
-pop_label_sub <- pop_label_sub[match(indNames(gl_all_sub4), pop_label_sub$ID),]
+pop_label_sub <- pop_label_sub[match(indNames(gl_all_sub4), pop_label_sub$id),]
 
 q.ALL.ls <- merge_sNMF_qmatrix_multiK(snmf_ALL, gl_all_sub4, k2plot = 1:10)
 
