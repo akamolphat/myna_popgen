@@ -7,7 +7,9 @@
 # ignore the results folder
 **/results/*
 #
-#
+# ignoring folders that are created in the Rscripts anyways
+05_STACKS_data_analysis/data/*
+06_DArT_data_analysis/data/*
 # ignoring some files to help with the process of creating this repository
 01_download_data/DArT.zip
 01_download_data/DArT/
