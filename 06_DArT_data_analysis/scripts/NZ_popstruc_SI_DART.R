@@ -77,7 +77,8 @@ dtpc <- dtpc %>%
   # Note that Napier (ROM) is changed to "Napier " with a space at the end
   # This is for plotting purpuses
   mutate(location = replace(as.character(popdef2), popdef2 == "Kaikohe (ROM)", "Kaikohe")) %>%
-  mutate(location = replace(location, location == "Auckland (ROM)", "Auckland")) %>%
+  mutate(location = replace(location, location == "Auckland", "Auckland (AKL)")) %>%  # NOTE that in Appendix figure, this is Onehunga
+  mutate(location = replace(location, location == "Auckland (ROM)", "Auckland (AKR)")) %>%
   mutate(location = replace(location, location == "Hamilton (ROM)", "Hamilton")) %>%
   mutate(location = replace(location, location == "Taupo (ROM)", "Taupo")) %>%
   mutate(location = replace(location, location == "Napier (ROM)", "Napier ")) 
@@ -90,14 +91,14 @@ dtlatlon <- gl_NZ_sub4@other$ind.metrics %>%
             lon = mean(longitude))
 dtlatlon$popdef2[order(dtlatlon$lon)]
 lab_order <- c("Helensville", "Ngunguru", "Waitakeres", 
-               "Onehunga", "Leigh", "Waiheke",
+               "Auckland (AKL)", "Leigh", "Waiheke",
                "Great Barrier Island", "Thames", "Napier", 
-               "Kaikohe","Auckland", 
+               "Kaikohe","Auckland (AKR)", 
                "Hamilton", "Taupo", "Napier ")
 lab_order_abb <- c("Helensville (HEL)", "Ngunguru (NGU)", "Waitakeres (WTK)", 
-                   "Onehunga (ONE)", "Leigh (LEI)", "Waiheke (WHK)",
+                   "Auckland (ONE)", "Leigh (LEI)", "Waiheke (WHK)",
                    "Great Barrier Island (GBI)", "Thames (THA)", "Napier (NAP)", 
-                   "Kaikohe (KKH)","Auckland (AKL)", 
+                   "Kaikohe (KKH)","Auckland (AKR)", 
                    "Hamilton (HAM)", "Taupo (TAU)", "Napier (NAR)")
 shape_order <- c(1, 13, 3, 12, 10, 8, 14, 11, 24,15,16,18,19, 17)
 gg_color_hue <- function(n) {
@@ -251,8 +252,8 @@ plotQ(q.df.ls[2:5],imgoutput="join",
       showindlab=F,
       grplab=pop_label_sub[, c("loc_time_abb", "population"), drop = F],
       # subsetgrp=c("NZ: Other", "NZ: Napier"),
-      subsetgrp=c("KKH", "HEL", "NGU", "WTK", "ONE", "LEI", 
-                  "AKL", "WHK", "HAM", "GBI", "THA", "TAU", "NAP", "NAR"),
+      subsetgrp=c("KKH", "HEL", "NGU", "WTK", "AKL", "LEI", 
+                  "AKR", "WHK", "HAM", "GBI", "THA", "TAU", "NAP", "NAR"),
       grplabangle = 90,
       # grplabsize = 2.5,
       # splabsize = 10,
