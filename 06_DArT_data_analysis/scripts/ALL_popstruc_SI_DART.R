@@ -95,7 +95,7 @@ lab_order <- c("AUS: Gold Coast", "AUS: Sydney", "NZ: Other",
                "Hawaii", "South Africa")
 lab_order_abb <- c("AUS: Gold Coast (GOL)", "AUS: Sydney (SYD)", "NZ: Other (NZO)", 
                    "NZ: Napier (NZN)", "Fiji (FIJ)", "AUS: Melbourne (MEL)", 
-                   "Maharashtra subpop. A (MAH)", "India: Other (IND)", 
+                   "IND: Maharashtra subpop. A (MAH)", "IND: Other (IND)", 
                    "Hawaii (HAW)", "South Africa (SAF)")
 dtpc$pop <- factor(dtpc$pop,
                    levels = lab_order)
@@ -258,21 +258,16 @@ rep <- 1:10
 samplenames <- indNames(gl_all_sub4)
 numind <- length(samplenames)
 # Make table of population information
-gl_all_sub4@other$ind.metrics$pop <- as.character(gl_all_sub4@other$ind.metrics$pop)
-gl_all_sub4@other$ind.metrics <- gl_all_sub4@other$ind.metrics %>% 
-  mutate(pop_ALLrecode = replace(pop, COUNTRY.OF.ORIGIN == "India", "India: Other")) %>%
-  mutate(pop_ALLrecode = replace(pop_ALLrecode, id %in% paste("M0", seq(210, 215), sep = ""), "Maharashtra subpop. A"))
-
-pop_label_sub <- gl_all_sub4$other$ind.metrics[, c("id","pop_ALLrecode", "pop")]
+pop_label_sub <- gl_all_sub4$other$ind.metrics[, c("ID","popdef1")]
 # Attach other information that might be more useful
 pop_label_sub <- pop_label_sub %>% 
-  mutate(snmfcluster = replace(pop_ALLrecode, pop_ALLrecode %in% c("AUS: Gold Coast"), "Group 1")) %>%
-  mutate(snmfcluster = replace(snmfcluster, pop_ALLrecode %in% c("AUS: Sydney"), "Group 2")) %>%
-  mutate(snmfcluster = replace(snmfcluster, pop_ALLrecode %in% c("NZ: Other"), "Group 3")) %>%
-  mutate(snmfcluster = replace(snmfcluster, pop_ALLrecode %in% c("Maharashtra subpop. A", "Fiji", "NZ: Napier", "AUS: Melbourne"), "Group 4")) %>%
-  mutate(snmfcluster = replace(snmfcluster, pop_ALLrecode %in% c("India: Other"), "Group 5")) %>%
-  mutate(snmfcluster = replace(snmfcluster, pop_ALLrecode %in% c("Hawaii"), "Group 6")) %>%
-  mutate(snmfcluster = replace(snmfcluster, pop_ALLrecode %in% c("South Africa"), "Group 7")) %>%
+  mutate(snmfcluster = replace(popdef1, popdef1 %in% c("AUS: Gold Coast"), "Group 1")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("AUS: Sydney"), "Group 2")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("NZ: Other"), "Group 3")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("IND: Maharashtra subpopulation A", "Fiji", "NZ: Napier", "AUS: Melbourne"), "Group 4")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("IND: Other"), "Group 5")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("Hawaii"), "Group 6")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("South Africa"), "Group 7")) %>%
   mutate(pcacluster = replace(snmfcluster, snmfcluster %in% c("Group 1"), "Cluster 1")) %>%
   mutate(pcacluster = replace(pcacluster, snmfcluster %in% c("Group 2", "Group 3", "Group 4"), "Cluster 2")) %>%
   mutate(pcacluster = replace(pcacluster, snmfcluster %in% c("Group 5"), "Cluster 3")) %>%
@@ -282,15 +277,15 @@ pop_label_sub <- pop_label_sub %>%
 
 pop_labels <- c("AUS: Gold Coast", "AUS: Sydney", "NZ: Other", 
                 "NZ: Napier", "Fiji", "AUS: Melbourne", 
-                "Maharashtra subpop. A", "India: Other", 
+                "IND: Maharashtra subpopulation A", "IND: Other", 
                 "Hawaii", "South Africa")
 pop_abb <- c("GOL", "SYD", "NZO", "NZN", "FIJ", "MEL", 
              "MAH", "IND", "HAW", "SAF")
-pop_trans <- data.frame(pop_ALLrecode = pop_labels,
+pop_trans <- data.frame(popdef1 = pop_labels,
                         pop_codes = pop_abb)
 pop_label_sub <- merge(pop_label_sub, pop_trans)
 # Make sure that the ID is sorted properly
-pop_label_sub <- pop_label_sub[match(indNames(gl_all_sub4), pop_label_sub$id),]
+pop_label_sub <- pop_label_sub[match(indNames(gl_all_sub4), pop_label_sub$ID),]
 
 q.ALL.ls <- merge_sNMF_qmatrix_multiK(snmf_ALL, gl_all_sub4, k2plot = 1:10)
 
