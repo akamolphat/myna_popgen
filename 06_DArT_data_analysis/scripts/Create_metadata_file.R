@@ -10,7 +10,7 @@ metacsv <- "../01_download_data/TableS1.2.csv"
 # Path to store the output csv file
 outcsv <- "../01_download_data/DArT/metadata_all_samples.csv"
 
-dt <- read.csv(metacsv)
+dt <- read.csv(metacsv, na.strings = "n/a")
 colnames(dt)[1] <- "id"
 
 write.csv(dt, outcsv, row.names = F)
