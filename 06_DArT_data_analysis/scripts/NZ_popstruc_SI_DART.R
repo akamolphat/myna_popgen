@@ -1,6 +1,6 @@
 # NZ_popstruc_SI_DArT.R ---------------------------------------------
 # This script is to show that results from the DArT dataset
-# is comparable to BCFtools datasets
+# is comparable to BCFtools datasets. Appendix S10.4
 # 
 # Define input ------------------------------------------------------
 dartcsv <- "../01_download_data/DArT/DArT_NZ/Report_DImy20-5737_SNP_2.csv"
