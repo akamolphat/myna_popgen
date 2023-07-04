@@ -16,11 +16,7 @@ path2metadatafile <- "../01_download_data/TableS1.2.csv"  # This path may change
 path2shapefile <- "../01_download_data/A_tristis_distribution_map/data_0.shp"  # This path will depend on where the shapefile is stored.
 
 # Read metadata to get lat/lon --------------------------------------#####
-meta_dt <- read.csv(path2metadatafile, header = T)
-meta_dt$latitude[meta_dt$latitude == "n/a"] <- NA
-meta_dt$longitude[meta_dt$longitude == "n/a"] <- NA
-meta_dt$latitude <- as.numeric(meta_dt$latitude)
-meta_dt$longitude <- as.numeric(meta_dt$longitude)
+meta_dt <- read.csv(path2metadatafile, header = T, na.strings = "n/a")
 
 # Add country of origin ---------------------------------------------#####
 meta_dt$COUNTRY.OF.ORIGIN <- meta_dt$popdef1
