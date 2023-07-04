@@ -12,8 +12,8 @@ library(ggrepel)  # Not used in final version of making the plots as
                   # labels were added manually
 # Define inputs -----------------------------------------------------#####
 # Paths to files may change depending on where it is stored in the computer
-path2metadatafile <- "../../myna_popgen/01_download_data/TableS1.2.csv"  # This path may change
-shapefile <- readOGR(dsn=path.expand("../../../06_Full_analyses/01_plot_map/data/raw/A_tristis_distribution_map/data_0.shp"))
+path2metadatafile <- "../01_download_data/TableS1.2.csv"  # This path may change
+path2shapefile <- "../01_download_data/A_tristis_distribution_map/data_0.shp"  # This path will depend on where the shapefile is stored.
 
 # Read metadata to get lat/lon --------------------------------------#####
 meta_dt <- read.csv(path2metadatafile, header = T)
@@ -74,7 +74,7 @@ meta_dt_all$COUNTRY.OF.ORIGIN[meta_dt_all$COUNTRY.OF.ORIGIN == "USA"] <- "Hawaii
 meta_dt_all$label_n <- paste(meta_dt_all$COUNTRY.OF.ORIGIN, ", n = ", meta_dt_all$n, sep = "")
 # Make map ----------------------------------------------------------#####
 ## Read shape file for Common myna distribution ---------------------#####
-shapefile <- readOGR(dsn=path.expand("../../../06_Full_analyses/01_plot_map/data/raw/A_tristis_distribution_map/data_0.shp"))
+shapefile <- readOGR(dsn=path.expand(path2shapefile))  # This path will depend on where the shapefile is stored.
 shapefile_df <- fortify(shapefile)
 ### Alter shape file longitude to 0-360. 
 # I can only do this with the distribution file and not the shoreline 
