@@ -8,6 +8,7 @@ library(PopGenReport)
 library(data.table)
 library(dartR)
 library(xlsx)
+source("../shared_scripts/functions.R")
 
 # Define input file -------------------------------------------------
 vcffile <- "../01_download_data/BCFtools_ALL/variant_calls.ALL.bialminQ30minGQ30DP15-125.norep.noadm.highnegfis.lmiss20.nosingledoubletons.vcfthin.hwe.snps.vcf.gz"
