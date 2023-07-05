@@ -47,13 +47,13 @@ Rscript scripts/IND_pop_struc_BCFtools.R
 Rscript scripts/ALL_pop_struc_BCFtools.R
 ```
 
-`NZ_pop_struc_BCFtools.R` generate results corresponding to Figure 2 in the main text, and Figures S8.1-S8.7 from Appendix S8.1.
-`IND_pop_struc_BCFtools.R` generate results corresponding to Figure 3 in the main text, and Figures S8.8-S8.13 from Appendix S8.2.
-`ALL_pop_struc_BCFtools.R` generate results corresponding to Figures 4 and 5 in the main text, and Figures S8.14-S8.22 from Appendix S8.3 and S8.4.
+* `NZ_pop_struc_BCFtools.R` generate results corresponding to Figure 2 in the main text, and Figures S8.1-S8.7 from Appendix S8.1.
+* `IND_pop_struc_BCFtools.R` generate results corresponding to Figure 3 in the main text, and Figures S8.8-S8.13 from Appendix S8.2.
+* `ALL_pop_struc_BCFtools.R` generate results corresponding to Figures 4 and 5 in the main text, and Figures S8.14-S8.22 from Appendix S8.3 and S8.4.
 
 ## Genetic diversity indices 
 If run from scratch, these scripts are to be executed interactively as it first outputs data for HP-rare to calculate rarefied allelic richness and private allelic richness via a HP-rare GUI. However, the results from HP-rare have been uploaded here (`data/processed/HP-Rare/*_HP-rare_out.txt`) and the scripts can therefore be sourced/ran in one go (e.g. Rscript scripts/NZ_popdiv.R)
 
-`scripts/NZ_popdiv.R` calculates population diversity metrics and output Table S9.1.
-`scripts/IND_popdiv.R` calculates population diversity metrics and output Table S9.2.
-`scripts/ALL_popdiv.R` calculates population diversity metrics and output Table 1 and Table S9.3.
+* `scripts/NZ_popdiv.R` calculates population diversity metrics and output Table S9.1.
+* `scripts/IND_popdiv.R` calculates population diversity metrics and output Table S9.2.
+* `scripts/ALL_popdiv.R` calculates population diversity metrics and output Table 1 and Table S9.3.
