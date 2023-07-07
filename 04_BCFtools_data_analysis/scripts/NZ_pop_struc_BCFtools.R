@@ -11,7 +11,7 @@
 # Define input files ------------------------------------------------
 #
 vcffile <- "../01_download_data/BCFtools_NZ/variant_calls.NZ.bialminQ30minGQ30DP15-100.norep.lmiss20.nosingledoubletons.vcfthin.hwe.snps.vcf.gz"
-metadtfile <- "../01_download_data/TableS1.2.csv"
+metadtfile <- "../01_download_data/TableS1.2v2.csv"
 # Define .geno file to store data for performing LEA ----------------
 genofile <- "data/processed/LEA/01_NZ/NZ_BCFtools_hwe.geno"
 # Create folders to store some data/outputs -------------------------
@@ -52,9 +52,9 @@ gl@other$ind.metrics <- metadtsub
 # Assign individual ID to individual metadata
 gl@other$ind.metrics$ID <- indNames(gl)
 # Attach population information to genlight object
-pop(gl) <- gl@other$ind.metrics$popdef2
+pop(gl) <- gl@other$ind.metrics$popdef1
 # Count samples per location ----------------------------------------
-gl@other$ind.metrics %>% dplyr::count(popdef2)
+gl@other$ind.metrics %>% dplyr::count(popdef1)
 
 # Re-perform PCA on the full dataset --------------------------------
 pc <- gl.pcoa(gl, nfactors=10, parallel = T, n.cores = 8)
@@ -65,17 +65,17 @@ dtpc <- data.frame(pc$scores)
 save(pc, file = "results/PCA/01_NZ/PCA_NZ_BCFtools_hwe.Rdata")
 load("results/PCA/01_NZ/PCA_NZ_BCFtools_hwe.Rdata")
 # Assign population information -------------------------------------
-dtpc$popdef2 <- gl$other$ind.metrics$popdef2
+dtpc$popdef1 <- gl$other$ind.metrics$popdef1
 # Assign whether it is ROM or Modern
 dtpc <- dtpc %>% 
-  mutate(ROM = ifelse(grepl("(ROM)", popdef2), 
+  mutate(ROM = ifelse(grepl("(ROM)", popdef1), 
                                 "ROM", 
                                 "Modern")) %>%
-  mutate(ROM = replace(ROM, "(ROM)" %in% popdef2, "ROM samples")) %>%
+  mutate(ROM = replace(ROM, "(ROM)" %in% popdef1, "ROM samples")) %>%
 # Assign location regardless of whether it is ROM or not
 # Note that Napier (ROM) is changed to "Napier " with a space at the end
 # This is for plotting purpuses
-  mutate(location = replace(popdef2, popdef2 == "Kaikohe (ROM)", "Kaikohe")) %>%
+  mutate(location = replace(popdef1, popdef1 == "Kaikohe (ROM)", "Kaikohe")) %>%
   mutate(location = replace(location, location == "Auckland", "Auckland (AKL)")) %>%  # NOTE that in Appendix figure, this is Onehunga
   mutate(location = replace(location, location == "Auckland (ROM)", "Auckland (AKR)")) %>%
   mutate(location = replace(location, location == "Hamilton (ROM)", "Hamilton")) %>%
@@ -87,10 +87,10 @@ write.csv(dtpc, file = "results/PCA/01_NZ/PCA_NZ_BCFtools_hwe.csv")
 # Get lat and long for each location to sort legends by
 # This was not used in the end
 dtlatlon <- gl@other$ind.metrics %>% 
-  group_by(popdef2) %>%
+  group_by(popdef1) %>%
   summarise(lat = mean(latitude),
             lon = mean(longitude))
-# dtlatlon$popdef2[order(dtlatlon$lon)]
+# dtlatlon$popdef1[order(dtlatlon$lon)]
 lab_order <- c("Helensville", "Ngunguru", "Waitakeres", 
                "Auckland (AKL)", "Leigh", "Waiheke",
                "Great Barrier Island", "Thames", "Napier", 
@@ -214,7 +214,7 @@ gl$other$latlon <- latlon_mat
 # this one sample due to the difference in coordinates. This is sample
 # M0367
 #
-gl$other$ind.metrics %>% dplyr::count(popdef2)
+gl$other$ind.metrics %>% dplyr::count(popdef1)
 # Drop populations and samples 
 glsub <- gl.drop.pop(gl, pop.list = c("Auckland", "Taupo (ROM)", "Kaikohe (ROM)"))#, "Great Barrier Island"))
 glsub <- gl.drop.ind(glsub, ind.list = c("M0367"))
@@ -419,7 +419,7 @@ bestK
 rep <- 1:10
 samplenames <- indNames(gl)
 numind <- length(samplenames)
-pop_label_sub <- gl$other$ind.metrics[, c("ID","popdef2", "popdef1")]
+pop_label_sub <- gl$other$ind.metrics[, c("ID","popdef1", "popdef2")]
 pop_labels <- c("Auckland (ROM)", "Great Barrier Island",
                 "Hamilton (ROM)", "Helensville", 
                 "Kaikohe (ROM)", "Leigh",
@@ -427,13 +427,13 @@ pop_labels <- c("Auckland (ROM)", "Great Barrier Island",
                 "Taupo (ROM)", "Thames",
                 "Waiheke", "Waitakeres",
                 "Napier", "Napier (ROM)")
-dtlatlon$popdef2[order(dtlatlon$lon)]
-pop_trans <- data.frame(popdef2 = pop_labels,
+dtlatlon$popdef1[order(dtlatlon$lon)]
+pop_trans <- data.frame(popdef1 = pop_labels,
                         loc_time = LETTERS[1:length(pop_labels)],
                         loc_time_abb = c("AKR", "GBI", "HAM", "HEL", "KKH", "LEI",
                                          "NGU", "AKL", "TAU", "THA", "WHK", "WTK", "NAP", "NAR"))
 pop_label_sub <- merge(pop_label_sub, pop_trans)
-colnames(pop_label_sub) <- c("popdef2", "ID", "population", "location/sample", "loc_time_abb")
+colnames(pop_label_sub) <- c("popdef1", "ID", "population", "location/sample", "loc_time_abb")
 pop_label_sub <- pop_label_sub[match(indNames(gl), pop_label_sub$ID),]
 
 q.df.ls <- merge_sNMF_qmatrix_multiK(snmf_NZ_hwe, gl, k2plot = 2)
