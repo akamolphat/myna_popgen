@@ -12,34 +12,34 @@ library(ggrepel)  # Not used in final version of making the plots as
                   # labels were added manually
 # Define inputs -----------------------------------------------------#####
 # Paths to files may change depending on where it is stored in the computer
-path2metadatafile <- "../01_download_data/TableS1.2.csv"  # This path may change
+path2metadatafile <- "../01_download_data/TableS1.2v2.csv"  # This path may change
 path2shapefile <- "../01_download_data/A_tristis_distribution_map/data_0.shp"  # This path will depend on where the shapefile is stored.
 
 # Read metadata to get lat/lon --------------------------------------#####
 meta_dt <- read.csv(path2metadatafile, header = T, na.strings = "n/a")
 
 # Add country of origin ---------------------------------------------#####
-meta_dt$COUNTRY.OF.ORIGIN <- meta_dt$popdef1
-meta_dt$popdef1 %>% unique()
+meta_dt$COUNTRY.OF.ORIGIN <- meta_dt$popdef2
+meta_dt$popdef2 %>% unique()
 meta_dt <- meta_dt %>%
   mutate(COUNTRY.OF.ORIGIN = case_when(
-    popdef1 %in% c("NZ: Other", "NZ: Napier") ~ "New Zealand",
-    popdef1 %in% c("IND: Other", "IND: Maharashtra subpopulation A") ~ "India",
-    popdef1 %in% c("AUS: Sydney", "AUS: Gold Coast", "AUS: Melbourne", "") ~ "Australia",
-    popdef1 == "Fiji" ~ "Fiji",
-    popdef1 == "Hawaii" ~ "USA",
-    popdef1 == "South Africa" ~ "South Africa"))
+    popdef2 %in% c("NZ: Other", "NZ: Napier") ~ "New Zealand",
+    popdef2 %in% c("IND: Other", "IND: Maharashtra subpopulation A") ~ "India",
+    popdef2 %in% c("AUS: Sydney", "AUS: Gold Coast", "AUS: Melbourne", NA) ~ "Australia",
+    popdef2 == "Fiji" ~ "Fiji",
+    popdef2 == "Hawaii" ~ "USA",
+    popdef2 == "South Africa" ~ "South Africa"))
 
 # Add more precise location for plotting ----------------------------#####
 # These are pop_def2 locations 
 # when defined and original Australian locations as defined by 
 # Ewart et al. (2019)
 meta_dt$pop_clean <- meta_dt$Precise.location
-meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("Australia") & (meta_dt$popdef2 != "")] <- meta_dt$popdef2[meta_dt$COUNTRY.OF.ORIGIN %in% c("Australia") & (meta_dt$popdef2 != "")]
-meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("New Zealand")] <- meta_dt$popdef2[meta_dt$COUNTRY.OF.ORIGIN %in% c("New Zealand")]
+meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("Australia") & is.na(meta_dt$popdef1)] <- meta_dt$popdef1[meta_dt$COUNTRY.OF.ORIGIN %in% c("Australia") & is.na(meta_dt$popdef1)]
+meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("New Zealand")] <- meta_dt$popdef1[meta_dt$COUNTRY.OF.ORIGIN %in% c("New Zealand")]
 
-meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("USA", "South Africa", "Fiji")] <- meta_dt$popdef1[meta_dt$COUNTRY.OF.ORIGIN %in% c("USA", "South Africa", "Fiji")]
-meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("India")] <- meta_dt$popdef2[meta_dt$COUNTRY.OF.ORIGIN %in% c("India")]
+meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("USA", "South Africa", "Fiji")] <- meta_dt$popdef2[meta_dt$COUNTRY.OF.ORIGIN %in% c("USA", "South Africa", "Fiji")]
+meta_dt$pop_clean[meta_dt$COUNTRY.OF.ORIGIN %in% c("India")] <- meta_dt$popdef1[meta_dt$COUNTRY.OF.ORIGIN %in% c("India")]
 meta_dt$pop_clean[meta_dt$pop_clean == "Melbourne, Nunawading Recycling Centre"] <- "Melbourne"
 meta_dt$pop_clean[is.na(meta_dt$latitude)] <- NA
 
@@ -328,7 +328,7 @@ dev.off()
 
 
 #### Add legend
-prow2 <- plot_grid(prow, legend_b, ncol = 1, rel_heights = c(1, .15))
+prow2 <- plot_grid(prow, leg2, ncol = 1, rel_heights = c(1, .15))
 
 png("results/NZ_datapoints_nolabels.png", width = 7, height = 3.5, units = "in", res = 600)
 mp3a + theme(legend.position = "none")
