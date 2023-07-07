@@ -5,7 +5,7 @@
 # Define input files ------------------------------------------------
 #
 vcffile <- "../01_download_data/BCFtools_IND/variant_calls.IND.bialminQ30minGQ30DP15-100.norep.highnegfis.lmiss20.nosingledoubletons.vcfthin.hwe.snps.vcf.gz"
-metadtfile <- "../01_download_data/TableS1.2.csv"
+metadtfile <- "../01_download_data/TableS1.2v2.csv"
 # Define .geno file to store data for performing LEA ----------------
 genofile <- "data/processed/LEA/02_IND/IND_hwe.geno"
 # Create folders to store some data/outputs -------------------------
@@ -40,13 +40,16 @@ gl@other$ind.metrics <- metadtsub
 # Assign individual ID to individual metadata
 gl@other$ind.metrics$ID <- indNames(gl)
 # Define Pop4
-gl$other$ind.metrics$IND_pop_recode <- gl$other$ind.metrics$popdef2
+gl$other$ind.metrics$IND_pop_recode <- gl$other$ind.metrics$popdef1
 gl$other$ind.metrics <- gl$other$ind.metrics %>%
-  mutate(IND_pop_recode = replace(IND_pop_recode, ID %in% paste("M0", seq(210, 215), sep = ""), "Maharashtra subpop. A"))
+  mutate(IND_pop_recode = replace(IND_pop_recode, popdef1 %in% "Maharashtra subpopulation A", "Maharashtra subpop. A")) %>%
+# Grouped Maha. subpop. A with Maharashtra 
+  mutate(IND_popbyloc = replace(popdef1, popdef1 %in% "Maharashtra subpopulation A", "Maharashtra"))
+
 # pop(gl) <- gl$other$ind.metrics$IND_pop_recode
-pop(gl) <- gl@other$ind.metrics$popdef2
+pop(gl) <- gl@other$ind.metrics$IND_popbyloc
 # Count samples per location ----------------------------------------
-gl@other$ind.metrics %>% dplyr::count(popdef2)
+gl@other$ind.metrics %>% dplyr::count(IND_popbyloc)
 # Re-perform PCA on the full dataset --------------------------------
 pc <- gl.pcoa(gl, nfactors=10, parallel = T, n.cores = 8)
 # Save pc object for reproducibility
@@ -57,23 +60,20 @@ gl.pcoa.plot(pc, gl, pop.labels= "pop")
 # Create dataframe for pricipal component axes ----------------------
 dtpc <- data.frame(pc$scores)
 # Assign population information -------------------------------------
-dtpc$popdef2 <- gl$other$ind.metrics$popdef2
+dtpc$IND_popbyloc <- gl$other$ind.metrics$IND_popbyloc
 dtpc$IND_pop_recode <- gl$other$ind.metrics$IND_pop_recode
 write.csv(dtpc, file = "results/PCA/02_IND/PCA_IND_hwe.csv")
 dtpc <- read.csv("results/PCA/02_IND/PCA_IND_hwe.csv")
 # Get lat and long for each location to sort legends by
 dtlatlon <- gl@other$ind.metrics %>% 
-  group_by(popdef2) %>%
-  summarise(lat = mean(latitude),
+  dplyr::group_by(IND_popbyloc) %>%
+  dplyr::summarise(lat = mean(latitude),
             lon = mean(longitude))
-# dtlatlon$popdef2[order(dtlatlon$lon)]
-lab_order <- dtlatlon$popdef2[order(dtlatlon$lon)]
+# dtlatlon$IND_popbyloc[order(dtlatlon$lon)]
+lab_order <- dtlatlon$IND_popbyloc[order(dtlatlon$lon)]
 shape_order <- c(16, 11, 17, 15, 3, 12, 10, 8, 5)
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-col_order <- gg_color_hue(9)
+
+col_order <- gg_color_hue(9)  # Function defined in shared_scripts/functions.R
 dtcolshapes <- data.frame(pop = as.character(lab_order),
                           pop_lab = as.character(lab_order),
                           col = col_order,
@@ -81,14 +81,14 @@ dtcolshapes <- data.frame(pop = as.character(lab_order),
 # Create dataframe with the variance explained for each PC ---------
 dtvar <- PCA_var_explained(pc)
 # Convert dtpc population column to factor and in order ------------
-dtpc$popdef2 <- factor(dtpc$popdef2,
+dtpc$IND_popbyloc <- factor(dtpc$IND_popbyloc,
                        levels = lab_order)
 # Create PC1 vs PC2 plot --------------------------------------------
 pl <- plotPCASI(dtpc, 
                 varls = round(dtvar$variance_explained, 1),
                 dtcolshapes,
                 xaxis = 1,
-                yaxis = 2, popcol = "popdef2") + 
+                yaxis = 2, popcol = "IND_popbyloc") + 
   PCA_theme
 pl <- pl +
   theme(axis.title = element_text(size = 10, face = "bold"),
@@ -121,7 +121,7 @@ gl$other$latlon <- latlon_mat
 # Retain populations with sufficient n (n > 5)
 #
 #
-gl$other$ind.metrics %>% dplyr::count(popdef2)
+gl$other$ind.metrics %>% dplyr::count(popdef1)
 # Drop populations and samples 
 glsub <- gl.drop.pop(gl, pop.list = c("Gujarat"))
 # Drop samples from Maharashtra subpop. A
@@ -238,21 +238,21 @@ pc2v3 <- plotPCASI(dtpc,
                    varls = round(dtvar$variance_explained, 1),
                    dtcolshapes,
                    xaxis = 2,
-                   yaxis = 3, popcol = "popdef2") + 
+                   yaxis = 3, popcol = "IND_popbyloc") + 
   PCA_theme
 
 pc3v4 <- plotPCASI(dtpc, 
                    varls = round(dtvar$variance_explained, 1),
                    dtcolshapes,
                    xaxis = 3,
-                   yaxis = 4, popcol = "popdef2") + 
+                   yaxis = 4, popcol = "IND_popbyloc") + 
   PCA_theme
 
 pc4v5 <- plotPCASI(dtpc, 
                    varls = round(dtvar$variance_explained, 1),
                    dtcolshapes,
                    xaxis = 4,
-                   yaxis = 5, popcol = "popdef2") + 
+                   yaxis = 5, popcol = "IND_popbyloc") + 
   PCA_theme
 
 legend_b <- get_legend(
@@ -302,8 +302,8 @@ poporder1 <- c("Maharashtra","Madhya Pradesh","Karnataka",
 
 pIND_FSTmatmerge <- plot_FST_mat_from_xlsx(FSTxlsx = "results/FST/02_IND/pairwiseFST_IND_BCF_hwe_100bs.xlsx",
                                                     poporder = poporder1,
-                                          dt1spreadsheetname = "FST_100bs_popdef2",
-                                          dt2spreadsheetname = "FST_100bs_val_popdef2",
+                                          dt1spreadsheetname = "FST_100bs_popdef1",
+                                          dt2spreadsheetname = "FST_100bs_val_popdef1",
                                           dt3spreadsheetname = "pval_100bs")
 
 
