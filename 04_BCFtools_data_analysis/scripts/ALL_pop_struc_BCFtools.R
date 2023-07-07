@@ -5,8 +5,7 @@
 # Define input files ------------------------------------------------
 #
 vcffile <- "../01_download_data/BCFtools_ALL/variant_calls.ALL.bialminQ30minGQ30DP15-125.norep.noadm.highnegfis.lmiss20.nosingledoubletons.vcfthin.hwe.snps.vcf.gz"
-# metadtfile <- "../raw_data/metadata_all_samples.csv"
-metadtfile <- "../01_download_data/TableS1.2.csv"
+metadtfile <- "../01_download_data/TableS1.2v2.csv"
 # Define location to store .geno filefor sNMF analysis --------------
 genofile <- "data/processed/LEA/03_ALL/snmf_ALL_hwe.geno"
 # Create folders to store some data/outputs -------------------------
@@ -40,9 +39,9 @@ gl@other$ind.metrics <- metadtsub
 # Assign individual ID to individual metadata
 gl@other$ind.metrics$ID <- indNames(gl)
 # Attach population information to genlight object
-pop(gl) <- gl$other$ind.metrics$popdef1
+pop(gl) <- gl$other$ind.metrics$popdef2
 # Count samples per location ----------------------------------------
-gl@other$ind.metrics %>% dplyr::count(popdef1)
+gl@other$ind.metrics %>% dplyr::count(popdef2)
 # Re-perform PCA on the ALL dataset, nmax = 20 ----------------------
 dtsub <- read.csv("data/processed/ALL_BCFtools_subset_nmax20.csv")
 gl_sub <- gl.keep.ind(gl, ind.list = dtsub$subsampled_ID, recalc = T, mono.rm = T)
@@ -191,16 +190,16 @@ rep <- 1:10
 samplenames <- indNames(gl)
 numind <- length(samplenames)
 # Make table of population information
-pop_label_sub <- gl$other$ind.metrics[, c("ID","popdef1", "popdef2")]
+pop_label_sub <- gl$other$ind.metrics[, c("ID","popdef2", "popdef1")]
 # Attach other information that might be more useful
 pop_label_sub <- pop_label_sub %>% 
-  mutate(snmfcluster = replace(popdef1, popdef1 %in% c("AUS: Gold Coast"), "1")) %>%
-  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("AUS: Sydney"), "2A")) %>%
-  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("NZ: Other"), "2B")) %>%
-  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("IND: Maharashtra subpopulation A", "Fiji", "NZ: Napier", "AUS: Melbourne"), "2C")) %>%
-  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("IND: Other"), "3")) %>%
-  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("Hawaii"), "4")) %>%
-  mutate(snmfcluster = replace(snmfcluster, popdef1 %in% c("South Africa"), "5")) %>%
+  mutate(snmfcluster = replace(popdef2, popdef2 %in% c("AUS: Gold Coast"), "1")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef2 %in% c("AUS: Sydney"), "2A")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef2 %in% c("NZ: Other"), "2B")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef2 %in% c("IND: Maharashtra subpopulation A", "Fiji", "NZ: Napier", "AUS: Melbourne"), "2C")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef2 %in% c("IND: Other"), "3")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef2 %in% c("Hawaii"), "4")) %>%
+  mutate(snmfcluster = replace(snmfcluster, popdef2 %in% c("South Africa"), "5")) %>%
   mutate(pcacluster = replace(snmfcluster, snmfcluster %in% c("Group 1"), "Cluster 1")) %>%
   mutate(pcacluster = replace(pcacluster, snmfcluster %in% c("Group 2", "Group 3", "Group 4"), "Cluster 2")) %>%
   mutate(pcacluster = replace(pcacluster, snmfcluster %in% c("Group 5"), "Cluster 3")) %>%
@@ -214,7 +213,7 @@ pop_labels <- c("AUS: Gold Coast", "AUS: Sydney", "NZ: Other",
                 "Hawaii", "South Africa")
 pop_abb <- c("GOL", "SYD", "NZO", "NZN", "FIJ", "MEL", 
              "MAH", "IND", "HAW", "SAF")
-pop_trans <- data.frame(popdef1 = pop_labels,
+pop_trans <- data.frame(popdef2 = pop_labels,
                         pop_codes = pop_abb)
 pop_label_sub <- merge(pop_label_sub, pop_trans)
 # Make sure that the ID is sorted properly
@@ -274,7 +273,7 @@ png("results/Figs_paper/Main/ALL_pop_str.png", width = 8.3, height = 8.44, units
 prow3
 dev.off()
 
-## Figure 5: FST matrix popdef1 -------------------------------------
+## Figure 5: FST matrix popdef2 -------------------------------------
 FSTpoporder <- c("South Africa", "Hawaii", "AUS: Gold Coast",
                  "AUS: Sydney", "NZ: Other", 
                  "AUS: Melbourne", "NZ: Napier", "Fiji",
@@ -511,13 +510,13 @@ if(any(diff(mean.entropyALLrel)>0)){
 }
 
 q.ALLrel.ls <- merge_sNMF_qmatrix_multiK(snmf_ALLsub, gl_sub2, k2plot = 1:10)
-pop_label_ALLrel<- gl_sub2$other$ind.metrics[, c("ID","popdef1")]
+pop_label_ALLrel<- gl_sub2$other$ind.metrics[, c("ID","popdef2")]
 poporder <- c("IND: Maharashtra subpopulation A", "AUS: Melbourne", "Fiji", 
               "NZ: Napier", "NZ: Other", "AUS: Sydney")
 plotQ(q.ALLrel.ls[2:10],imgoutput="join",
       showdiv = T,
       showindlab=F,
-      grplab=pop_label_ALLrel[, c("popdef1"), drop = F],
+      grplab=pop_label_ALLrel[, c("popdef2"), drop = F],
       subsetgrp=poporder,
       grplabangle = 90,
       grplabheight = 5,
@@ -546,8 +545,7 @@ plotQ(q.ALLrel.ls[2:10],imgoutput="join",
 
 ## Figures S8.18: FST ALL subpopulations ----------------------------
 # This is the FST population pairwise FST matrix between all populations
-# as defined by popdef2 and popdef1 (popdef2 + divide Maharashtra
-# into Maharashtra and Maharashtra subpop. A)
+# as defined by popdef1
 pALL_FSTmatALL <- plot_FST_mat_from_xlsx(FSTxlsx = "results/FST/03_ALL/pairwiseFST_ALL_BCF_hwe_100bs.xlsx", 
                                          poporder = c("South Africa", "Hawaii", "Gold Coast",
                                                       "Sydney", "Sydney (ROM)", "Helensville", "Ngunguru",
