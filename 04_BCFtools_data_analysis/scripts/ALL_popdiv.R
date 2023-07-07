@@ -12,9 +12,9 @@ source("../shared_scripts/functions.R")
 
 # Define input file -------------------------------------------------
 vcffile <- "../01_download_data/BCFtools_ALL/variant_calls.ALL.bialminQ30minGQ30DP15-125.norep.noadm.highnegfis.lmiss20.nosingledoubletons.vcfthin.hwe.snps.vcf.gz"
-metadtfile <- "../01_download_data/TableS1.2.csv"
+metadtfile <- "../01_download_data/TableS1.2v2.csv"
 # Read in VCF file --------------------------------------------------
-glALL <- gl.read.vcf(vcffileALL)
+glALL <- gl.read.vcf(vcffile)
 # Subset metadt for the genlight object
 indiv_namesALL <- gsub('[a-z]$', '', indNames(glALL))
 # Read in metadata --------------------------------------------------
@@ -28,20 +28,20 @@ metadtsub <- metadt %>%
 glALL@other$ind.metrics <- metadtsub
 # Assign individual ID to individual metadata
 glALL@other$ind.metrics$ID <- indNames(glALL)
-# Recode popdef2 with Maharashtra subpop. A separated ---------------
-glALL$other$ind.metrics$ALL_pop_recode <- glALL$other$ind.metrics$popdef2
+# Shorten to Maharashtra subpop. A ----------------------------------
+glALL$other$ind.metrics$ALL_pop_recode <- glALL$other$ind.metrics$popdef1
 glALL$other$ind.metrics <- glALL$other$ind.metrics %>%
-  mutate(ALL_pop_recode = replace(ALL_pop_recode, id %in% paste("M0", seq(210, 215), sep = ""), "Maharashtra subpop. A"))
+  mutate(ALL_pop_recode = replace(ALL_pop_recode, popdef1 %in% "Maharashtra subpopulation A", "Maharashtra subpop. A"))
 # Export to HP-rare -------------------------------------------------
-## popdef1 ----------------------------------------------------------
+## popdef2 ----------------------------------------------------------
 ### Export to .gp for HP-rare ---------------------------------------
-pop(glALL) <- glALL$other$ind.metrics$popdef1
+pop(glALL) <- glALL$other$ind.metrics$popdef2
 glALLmerge2 <- gl.filter.callrate(glALL, method='pop', threshold=0.8, verbose=3, recalc = T, mono.rm = T)
 dir.create("data/processed/HP-Rare", showWarnings = F)
 gl2genalex(glALLmerge2, outfile = 'glALLmerge2_CR08perpop.csv', outpath = './data/processed/HP-Rare/', overwrite = T)
 genalex2genepop("data/processed/HP-Rare/glALLmerge2_CR08perpop.csv", "data/processed/HP-Rare/glALLmerge2_CR08perpop.gp", "ALL dataset (populations within NZ: Other and India: Other merged). Filter for loci with CR >= 0.8 for each population as pop with missing loci cause error within allel.rich function in R.")
 
-## popdef2 with Maharashtra subpop. A separated ---------------------
+## popdef1 ----------------------------------------------------------
 ### Export to .gp for HP-rare ---------------------------------------
 gl2genalex(glALLsub2, outfile = 'glALLsub2_nmin6_CR08perpop.csv', outpath = './data/processed/HP-Rare/')
 genalex2genepop("data/processed/HP-Rare/glALLsub2_nmin6_CR08perpop.csv", "data/processed/HP-Rare/glALLsub2_nmin6_CR08perpop.gp", "ALL dataset (ROM and modern kept separate) after removal of populations with n <= 5. Filter for loci with CR >= 0.8 for each population as pop with missing loci cause error within allel.rich function in R.")
@@ -50,8 +50,8 @@ genalex2genepop("data/processed/HP-Rare/glALLsub2_nmin6_CR08perpop.csv", "data/p
 
 
 # Calculate pop. diversity in R -------------------------------------
-## popdef1 ----------------------------------------------------------
-pop(glALL) <- glALL$other$ind.metrics$popdef1
+## popdef2 ----------------------------------------------------------
+pop(glALL) <- glALL$other$ind.metrics$popdef2
 ### Ho and He -------------------------------------------------------
 dthet_ALLmerge2 <- gl.report.heterozygosity(glALL)
 ### PopGenReport AR -------------------------------------------------
@@ -80,7 +80,7 @@ colnames(dtALLmerge_HP.rare_p_allel_rich2) <- c("pop", "mean_private_allelic_ric
 dtdiv_glALLmerge2 <- merge(dthet_ALLmerge2, dtALLmerge_HP.rare_allel_rich2, all.x = T)
 dtdiv_glALLmerge2 <- merge(dtdiv_glALLmerge2, dtALLmerge_HP.rare_p_allel_rich2, all.x = T)
 dtdiv_glALLmerge2 <- merge(dtdiv_glALLmerge2, dtpoly_glALLmerge2$dt_summary)
-## popdef2 with Maharashtra subpop. A separated ---------------------
+## popdef1 ----------------------------------------------------------
 pop(glALL) <- glALL$other$ind.metrics$ALL_pop_recode
 ### Remove populations with n < 5 -----------------------------------
 glALLsub <- gl.drop.pop(glALL, pop.list = c("Gujarat", "Taupo (ROM)", "Auckland", "Kaikohe (ROM)"), recalc = T, mono.rm = T)
