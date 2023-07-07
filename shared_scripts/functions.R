@@ -172,7 +172,7 @@ PCA_subset_summary <- function(gl, ind_no, output.pdf, MAF_threshold = 0, reclas
   require(dartR)
   require(plyr)
   gl$other$ind.metrics$pop_subsampled <- pop(gl)
-  dt_sub <- ddply(gl$other$ind.metrics, .(pop_subsampled), plyr::here(summarise), subsampled_ID = sample(id, ind_no))
+  dt_sub <- ddply(gl$other$ind.metrics, .(pop_subsampled), plyr::here(summarise), subsampled_ID = sample(ID, ind_no))
   gl_sub <- gl.keep.ind(gl, ind.list = dt_sub$subsampled_ID, recalc = T)
   if (MAF_threshold != 0){
     gl_sub <- gl.filter.maf(gl_sub, threshold = MAF_threshold)
@@ -303,7 +303,7 @@ pcadapt_plot_subset <- function(gl, ind_no, path2filesuffix, outputfile.pdf, ite
   for (i in seq(1, iteration_no)){
     genofile <- paste(path2filesuffix, "i", i, ".geno", sep = "")
     lfmmfile <- paste(path2filesuffix, "i", i, ".lfmm", sep = "")
-    dt_sub <- ddply(gl$other$ind.metrics, .(pop), plyr::here(summarise), subsampled_ID = sample(id, ind_no))
+    dt_sub <- ddply(gl$other$ind.metrics, .(pop), plyr::here(summarise), subsampled_ID = sample(ID, ind_no))
     gl_sub <- gl.keep.ind(gl, ind.list = dt_sub$subsampled_ID, recalc = T)
     gl_sub <- gl.filter.monomorphs(gl_sub)
     mat_sub <- t(as.matrix(gl_sub))
@@ -432,7 +432,7 @@ gl_PCAdapt_iterations <- function(gl, n_per_pop, output, K_no, minmaf_threshold 
   v <- rep(NA, iterations)
   for (i in seq(1, iterations)){
     print(i)
-    dt_subsample_pop <- ddply(gl$other$ind.metrics, .(pop), plyr::here(summarise), subsampled_ID = sample(id, n_per_pop))
+    dt_subsample_pop <- ddply(gl$other$ind.metrics, .(pop), plyr::here(summarise), subsampled_ID = sample(ID, n_per_pop))
     glsub <- gl.keep.ind(gl, ind.list = dt_subsample_pop$subsampled_ID, recalc = T)
     glsub <- gl.filter.monomorphs(glsub)
     matsub <- t(as.matrix(glsub))
@@ -567,10 +567,10 @@ plot_dt_SFS_compare_same_n_conf <- function(gl, popname_ls, iterations = 10, ind
   # Iterate through the iterations
   for (i in seq(1, iterations)){
     print(paste("Iteration: ", i, sep = ""))
-    # dt_subsample_pop <- ddply(glsub$other$ind.metrics, .(POP_SUB), summarise, subsampled_ID = sample(id, size = eval(indmin), replace = F))
+    # dt_subsample_pop <- ddply(glsub$other$ind.metrics, .(POP_SUB), summarise, subsampled_ID = sample(ID, size = eval(indmin), replace = F))
     # dt_subsample_pop <- do.call("ddply",list(glsub$other$ind.metrics, .(POP_SUB), summarize, subsampled_ID = call("sample", as.symbol(id), indmin)))
     dt_subsample_pop <- ddply(glsub$other$ind.metrics, .(POP_SUB), here(summarize),
-                              subsampled_ID = sample(id, eval(indmin)))
+                              subsampled_ID = sample(ID, eval(indmin)))
     glsubsampled <- gl.keep.ind(glsub, ind.list = dt_subsample_pop$subsampled_ID, mono.rm = T, recalc = T)
     # glsubsampled <- gl.filter.callrate(glsubsampled, threshold = 1, recalc = T, plot.out = F)
     subsetdt <- gl.percent.freq(glsubsampled)
@@ -691,10 +691,10 @@ plot_SFS_from_gl <- function(gl){
   # Iterate through the iterations
   for (i in seq(1, iterations)){
     print(paste("Iteration: ", i, sep = ""))
-    # dt_subsample_pop <- ddply(glsub$other$ind.metrics, .(POP_SUB), summarise, subsampled_ID = sample(id, size = eval(indmin), replace = F))
+    # dt_subsample_pop <- ddply(glsub$other$ind.metrics, .(POP_SUB), summarise, subsampled_ID = sample(ID, size = eval(indmin), replace = F))
     # dt_subsample_pop <- do.call("ddply",list(glsub$other$ind.metrics, .(POP_SUB), summarize, subsampled_ID = call("sample", as.symbol(id), indmin)))
     dt_subsample_pop <- ddply(glsub$other$ind.metrics, .(POP_SUB), here(summarize),
-                              subsampled_ID = sample(id, eval(indmin)))
+                              subsampled_ID = sample(ID, eval(indmin)))
     glsubsampled <- gl.keep.ind(glsub, ind.list = dt_subsample_pop$subsampled_ID, mono.rm = T, recalc = T)
     glsubsampled <- gl.filter.callrate(glsubsampled, threshold = 1, recalc = T, plot.out = F)
     subsetdt <- gl.percent.freq(glsubsampled)
@@ -822,6 +822,7 @@ genalex2genepop <- function(genalex_csv, genepop_file, genepop_title = ""){
 # 
 calc_prop_polymorphic_loci_perpop <- function(gl){
   require(dartR)
+  library(tidyverse)
   poplist <- seppop(gl)
   count <- 0
   for (i in poplist) {
@@ -856,12 +857,13 @@ calc_prop_polymorphic_loci_perpop <- function(gl){
 calc_prop_polymorphic_loci_perpop_rarefact <- function(gl, n_per_pop, n_iter){
   require(dartR)
   require(plyr)
+  # library(tidyverse)
   count <- 0
   gl$other$ind.metrics$popsub <- pop(gl)
   for (i in seq(1, n_iter)){
     print(i)
     count <- count + 1
-    dt_subsample_pop <- ddply(gl$other$ind.metrics, .(popsub), plyr::here(summarise), subsampled_ID = sample(id, n_per_pop))
+    dt_subsample_pop <- ddply(gl$other$ind.metrics, .(popsub), plyr::here(summarise), subsampled_ID = sample(ID, n_per_pop))
     glsub <- gl.keep.ind(gl, ind.list = dt_subsample_pop$subsampled_ID)
     if (i == 1){
       dtsub <- calc_prop_polymorphic_loci_perpop(glsub)
