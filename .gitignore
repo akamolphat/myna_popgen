@@ -18,3 +18,4 @@
 01_download_data/STACKS_*
 01_download_data/BCFtools_*
 04_BCFtools_data_analysis/data/processed/LEA/
+01_download_data/A_tristis_distribution_map/*
