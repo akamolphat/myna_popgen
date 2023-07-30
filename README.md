@@ -19,6 +19,7 @@ This repository is divided into different folders for different tasks. Each fold
 │   └── README.md
 |
 ├── 04_BCFtools_data_analysis
+|   ├── data/processed
 |   ├── scripts
 │   └── README.md
 |
@@ -35,7 +36,7 @@ This repository is divided into different folders for different tasks. Each fold
 ```
 
 * `01_download_data` is where the data is downloaded. Sequence and sample data are to be downloaded from [Dryad](https://doi.org/10.5061/dryad.xsj3tx9m7), shapefile for the common myna distribution is to be downloaded from the IUCN redlist website.
-* `02_variant_calling` documents how the variants were called.
+* `02_variant_calling` documents how the variants were called and filtered.
 * `03_plot_map` plots maps of the species and sample distribution (Figure 1).
 * `04_BCFtools_data_analysis` performs population structure analyses and calculate population genetic diversity metrics based on the SNPs called via BCFtools. This section consititutes the main analyses and makes Figures 2-6, Figures in Appendix S8, Table 1, and Tables in Appendix S9.
 * `05_STACKS_data_analysis` performs population structure analyses and calculate population genetic diversity metrics based on the SNPs called via STACKS. This section makes figures in Appendix S10.1-S10.3.
