@@ -13,9 +13,11 @@ The following scripts can be found inside the scripts folder as follows:
 │   ├── IND_pop_struc_BCFtools.R
 │   ├── ALL_pairwiseFST_from_VCF.R
 │   ├── ALL_pop_struc_BCFtools.R
+│   ├── ALL_pop_struc_BCFtools_S8_5_to_S8_7.R
 │   ├── NZ_popdiv.R
 │   ├── IND_popdiv.R
-│   └── ALL_popdiv.R
+│   ├── ALL_popdiv.R
+│   └── ALL_SFS.R
 ├── data
 │   └── processed
 │       ├── HP-Rare
@@ -57,3 +59,15 @@ If run from scratch, these scripts are to be executed interactively as it first 
 * `scripts/NZ_popdiv.R` calculates population diversity metrics and output Table S9.1.
 * `scripts/IND_popdiv.R` calculates population diversity metrics and output Table S9.2.
 * `scripts/ALL_popdiv.R` calculates population diversity metrics and output Table 1 and Table S9.3.
+
+### Site Frequency Spectrum
+Site frequency spectrums were constructed using `ALL_SFS.R`. This script require the input "ALL" dataset here were filtered differently from the other datasets described above. The data are available on request or it can be generated using the filters described in Appendix S3 and S4, or in the 02_variant_calling folder of this repository, except for the filters for singletons and doubletons. This is because, while filtering out singletons and doubletons avoid inclusion of incorrect genotyping error, it also causes biases in the SNPs retained per population. The singleton/doubleton filter will remove more rare SNPs from populations (or group of individuals with similar genetic background) with lower number of individuals.
+
+* `ALL_SFS.R` generates results corresponding to Figure 6 in the main text, and Figure S9.1 from Appendix S9.
+
+## Additional population structure analyses
+Additional population structure analyses were performed on ALL dataset to creat Appendix S8.5 - S8.7 using the following script:
+
+* `ALL_pop_struc_BCFtools_S8_5_to_S8_7.R`
+
+However, the input "ALL" dataset here were filtered differently from the other datasets described above. The data are available on request or it can be generated using the filters described in Appendix S3, or in the section **6. Filter the variants called via BCFtools and STACKS** in the 02_variant_calling folder of this repository. 
