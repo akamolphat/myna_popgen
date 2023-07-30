@@ -39,7 +39,7 @@ giNZsub2 <- gl2gi(glNZsub2)
 dtNZsub2 <- allel.rich(giNZsub2)
 
 ## Export to .gp for HP-rare ----------------------------------------#####
-dir.create("data/processed/HP-Rare", showWarnings = F)
+dir.create("data/processed/HP-Rare", showWarnings = F, recursive = T)
 # All
 gl2genalex(glNZsub2, outfile = 'glNZsub2_nmin6_CR08perpop.csv', outpath = './data/processed/HP-Rare/')
 genalex2genepop("data/processed/HP-Rare/glNZsub2_nmin6_CR08perpop.csv", "data/processed/HP-Rare/glNZsub2_nmin6_CR08perpop.gp", "NZ dataset (ROM and modern kept separate) after removal of populations with n <= 5. Filter for loci with CR >= 0.8 for each population as pop with missing loci cause error within allel.rich function in R.")
